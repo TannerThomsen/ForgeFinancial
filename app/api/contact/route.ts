@@ -11,6 +11,13 @@ type ContactPayload = {
   message?: string;
 };
 
+type ResendError = {
+  name?: string;
+  message?: string;
+  statusCode?: number;
+  code?: string;
+};
+
 const requiredFields: Array<keyof ContactPayload> = [
   'firstName',
   'lastName',
@@ -45,11 +52,35 @@ function detailRow(label: string, value: string) {
   `;
 }
 
+function getResendError(error: unknown): ResendError {
+  if (!error || typeof error !== 'object') {
+    return { message: 'Unknown Resend error.' };
+  }
+
+  const errorRecord = error as Record<string, unknown>;
+
+  return {
+    name: typeof errorRecord.name === 'string' ? errorRecord.name : undefined,
+    message: typeof errorRecord.message === 'string' ? errorRecord.message : undefined,
+    statusCode:
+      typeof errorRecord.statusCode === 'number' ? errorRecord.statusCode : undefined,
+    code: typeof errorRecord.code === 'string' ? errorRecord.code : undefined,
+  };
+}
+
 export async function POST(request: Request) {
   const apiKey = process.env.RESEND_API_KEY;
 
   if (!apiKey) {
-    return NextResponse.json({ error: 'Resend is not configured.' }, { status: 500 });
+    console.error('[contact] Missing RESEND_API_KEY environment variable.');
+
+    return NextResponse.json(
+      {
+        error: 'Contact form email is not configured.',
+        stage: 'missing_api_key',
+      },
+      { status: 500 },
+    );
   }
 
   const payload = (await request.json().catch(() => null)) as ContactPayload | null;
@@ -151,7 +182,7 @@ export async function POST(request: Request) {
     </html>
   `;
 
-  const { error } = await resend.emails
+  const { data: resendData, error } = await resend.emails
     .send({
       from,
       to,
@@ -160,11 +191,36 @@ export async function POST(request: Request) {
       html,
       replyTo: data.email,
     })
-    .catch(() => ({ error: { message: 'Resend request failed.' } }));
+    .catch((sendError: unknown) => ({
+      data: null,
+      error: sendError,
+    }));
 
   if (error) {
-    return NextResponse.json({ error: 'Unable to send message.' }, { status: 500 });
+    const resendError = getResendError(error);
+
+    console.error('[contact] Resend send failed.', {
+      error: resendError,
+      from,
+      to,
+      replyTo: data.email,
+    });
+
+    return NextResponse.json(
+      {
+        error: 'Unable to send message through Resend.',
+        stage: 'resend_send',
+        resend: resendError,
+      },
+      { status: 500 },
+    );
   }
 
-  return NextResponse.json({ ok: true });
+  console.info('[contact] Resend email sent.', {
+    id: resendData?.id,
+    from,
+    to,
+  });
+
+  return NextResponse.json({ ok: true, id: resendData?.id });
 }
