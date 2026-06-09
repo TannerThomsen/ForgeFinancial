@@ -32,6 +32,19 @@ function escapeHtml(value: string) {
     .replace(/'/g, '&#039;');
 }
 
+function detailRow(label: string, value: string) {
+  return `
+    <tr>
+      <td style="padding: 14px 0; width: 120px; color: #7a8599; font-family: Arial, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; vertical-align: top;">
+        ${label}
+      </td>
+      <td style="padding: 14px 0; color: #0c1e42; font-family: Georgia, serif; font-size: 20px; line-height: 1.35; vertical-align: top;">
+        ${escapeHtml(value)}
+      </td>
+    </tr>
+  `;
+}
+
 export async function POST(request: Request) {
   const apiKey = process.env.RESEND_API_KEY;
 
@@ -78,12 +91,64 @@ export async function POST(request: Request) {
     data.message,
   ].join('\n');
   const html = `
-    <h2>New Forge website inquiry</h2>
-    <p><strong>Name:</strong> ${escapeHtml(fullName)}</p>
-    <p><strong>Company:</strong> ${escapeHtml(data.company)}</p>
-    <p><strong>Email:</strong> ${escapeHtml(data.email)}</p>
-    <p><strong>Message:</strong></p>
-    <p>${escapeHtml(data.message).replace(/\n/g, '<br />')}</p>
+    <!doctype html>
+    <html>
+      <body style="margin: 0; background: #f1efe9; padding: 32px 18px;">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
+          <tr>
+            <td align="center">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width: 680px; border-collapse: collapse; background: #f8f7f4; border: 1px solid #e4e1d8;">
+                <tr>
+                  <td style="background: #050914; padding: 28px 30px 24px;">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
+                      <tr>
+                        <td>
+                          <div style="height: 8px; width: 8px; background: #d95f1a; border-radius: 50%; margin-bottom: 18px;"></div>
+                          <div style="color: #ff7a1a; font-family: Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;">
+                            New Website Inquiry
+                          </div>
+                          <h1 style="margin: 10px 0 0; color: #ffffff; font-family: Georgia, serif; font-size: 34px; line-height: 1.05; font-weight: 400;">
+                            ${escapeHtml(fullName)}
+                          </h1>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding: 28px 30px 8px;">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
+                      ${detailRow('Company', data.company)}
+                      ${detailRow('Email', data.email)}
+                    </table>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding: 10px 30px 30px;">
+                    <div style="border-left: 3px solid #d95f1a; background: #ffffff; padding: 22px 24px;">
+                      <div style="margin-bottom: 12px; color: #7a8599; font-family: Arial, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;">
+                        Message
+                      </div>
+                      <div style="color: #0c1e42; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.75;">
+                        ${escapeHtml(data.message).replace(/\n/g, '<br />')}
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="background: #0c1e42; padding: 18px 30px; color: rgba(255,255,255,0.72); font-family: Arial, sans-serif; font-size: 13px; line-height: 1.6;">
+                    Reply directly to this email to respond to ${escapeHtml(fullName)} at ${escapeHtml(data.email)}.
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
   `;
 
   const { error } = await resend.emails
