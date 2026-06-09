@@ -50,32 +50,34 @@ export default function Nav({ current, goTo }: NavProps) {
           </span>
         </button>
 
-        <div className="hidden items-center gap-7 lg:flex">
-          {navLinks.map((link) =>
-            typeof link.href === 'string' ? (
-              <Link
-                className="font-outfit text-xs font-normal text-muted transition-colors hover:text-navy"
-                href={link.href}
-                key={link.label}
-                target="_blank"
-              >
-                {link.label}
-              </Link>
-            ) : (
-              <button
-                className="font-outfit text-xs font-normal text-muted transition-colors hover:text-navy"
-                key={link.label}
-                onClick={() => goTo(link.section)}
-                type="button"
-              >
-                {link.label}
-              </button>
-            ),
-          )}
-          <Link className="forge-button forge-button-ghost min-h-[34px] px-5" href="/contact">
-            Book a Call
-          </Link>
-        </div>
+        <ul className="hidden items-center gap-7 lg:flex">
+          {navLinks.map((link) => (
+            <li key={link.label}>
+              {typeof link.href === 'string' ? (
+                <Link
+                  className="font-outfit text-xs font-normal text-muted transition-colors hover:text-navy"
+                  href={link.href}
+                  target="_blank"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <button
+                  className="font-outfit text-xs font-normal text-muted transition-colors hover:text-navy"
+                  onClick={() => goTo(link.section)}
+                  type="button"
+                >
+                  {link.label}
+                </button>
+              )}
+            </li>
+          ))}
+          <li>
+            <Link className="forge-button forge-button-ghost min-h-[34px] px-5" href="/contact">
+              Book a Call
+            </Link>
+          </li>
+        </ul>
 
         <Link className="forge-button forge-button-ghost min-h-[34px] px-4 lg:hidden" href="/contact">
           Book

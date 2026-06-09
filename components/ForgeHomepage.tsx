@@ -72,8 +72,10 @@ export default function ForgeHomepage() {
 
   return (
     <LazyMotion features={domAnimation}>
-      <main className={snapEnabled ? 'fixed inset-0 overflow-hidden bg-paper' : 'bg-paper'}>
+      <header>
         <Nav current={current} goTo={handleGoTo} />
+      </header>
+      <main className={snapEnabled ? 'fixed inset-0 overflow-hidden bg-paper' : 'bg-paper'}>
         {snapEnabled ? (
           <>
             <Spine current={current} goTo={handleGoTo} />

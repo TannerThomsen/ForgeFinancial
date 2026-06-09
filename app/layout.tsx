@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { Outfit, Space_Grotesk } from 'next/font/google';
+import JsonLd from '@/src/components/JsonLd';
+import { financialServiceSchema, siteUrl } from '@/lib/site';
 import '@/styles/globals.css';
 
 const display = Space_Grotesk({
@@ -17,20 +19,35 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: 'Forge Financial Solutions | AR Strategy & Implementation',
+  title: 'Forge Financial Solutions — AR Consulting',
   description:
-    'Senior accounts receivable consulting for mid-market finance leaders. Strategy, software implementation, ERP integration, and ongoing governance - built around operational outcomes.',
+    'Forge Financial Solutions helps mid-market finance teams improve cash flow through AR strategy, software implementation, ERP integration, and governance.',
+  metadataBase: new URL(siteUrl),
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
-    title: 'Forge Financial Solutions',
-    description: 'Forge Better Cash Flow',
-    url: 'https://forgefinancialsolution.com',
+    title: 'Forge Financial Solutions — AR Consulting',
+    description:
+      'Senior accounts receivable consulting for AR strategy, software implementation, ERP integration, process optimization, and governance.',
+    url: siteUrl,
     siteName: 'Forge Financial Solutions',
     type: 'website',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Forge Financial Solutions',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Forge Financial Solutions',
-    description: 'Senior AR consulting for mid-market finance leaders.',
+    title: 'Forge Financial Solutions — AR Consulting',
+    description:
+      'Senior accounts receivable consulting for mid-market finance leaders.',
+    images: ['/og-image.jpg'],
   },
   robots: { index: true, follow: true },
 };
@@ -42,8 +59,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <JsonLd data={financialServiceSchema} />
+      </head>
       <body className={`${display.variable} ${outfit.variable}`}>
         {children}
+        <footer className="sr-only">
+          Forge Financial Solutions LLC serves finance leaders from Spirit Lake, Iowa.
+          Contact {financialServiceSchema.email as string} or {financialServiceSchema.telephone as string}.
+        </footer>
       </body>
     </html>
   );
