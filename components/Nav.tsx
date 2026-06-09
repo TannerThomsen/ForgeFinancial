@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { m } from 'framer-motion';
 
 type NavProps = {
@@ -36,18 +37,19 @@ export default function Nav({ current, goTo }: NavProps) {
     >
       <div className="mx-auto flex h-full max-w-[1280px] items-center justify-between px-6 md:px-10">
         <button
-          className="flex items-center gap-2 text-left font-outfit text-[13px] font-semibold text-navy"
+          className="relative h-[50px] w-[128px] md:h-[54px] md:w-[138px]"
           onClick={() => goTo(0)}
           type="button"
           aria-label="Go to homepage"
         >
-          <span className="grid h-7 w-7 place-items-center rounded-[2px] bg-navy text-[12px] font-bold text-white shadow-[0_0_0_1px_rgba(217,95,26,0.25),inset_3px_0_0_var(--orange)]">
-            F
-          </span>
-          <span className="leading-none">
-            Forge
-            <span className="ml-1 font-normal text-navy/55">Financial Solutions</span>
-          </span>
+          <Image
+            alt="Forge Financial Solutions"
+            className="object-contain object-left"
+            fill
+            priority
+            sizes="(min-width: 768px) 138px, 128px"
+            src="/forge-logo-transparent.png"
+          />
         </button>
 
         <ul className="hidden items-center gap-7 lg:flex">
