@@ -11,12 +11,32 @@ const fields = [
 
 export default function ContactForm() {
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState('');
 
   return (
     <form
       className="border border-border bg-white/70 p-6 shadow-forge backdrop-blur md:p-8"
-      onSubmit={(event) => {
+      onSubmit={async (event) => {
         event.preventDefault();
+        setError('');
+
+        const form = event.currentTarget;
+        const formData = new FormData(form);
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(Object.fromEntries(formData.entries())),
+        });
+
+        if (!response.ok) {
+          setSent(false);
+          setError('Something went wrong. Please try again.');
+          return;
+        }
+
+        form.reset();
         setSent(true);
       }}
     >
@@ -53,7 +73,11 @@ export default function ContactForm() {
         </button>
         {sent ? (
           <p className="font-outfit text-[13px] font-light text-muted">
-            Thanks. For the local preview, this shows the success state without sending email.
+            Thanks. Your message has been sent.
+          </p>
+        ) : error ? (
+          <p className="font-outfit text-[13px] font-light text-muted">
+            {error}
           </p>
         ) : (
           <p className="font-outfit text-[11px] font-light text-navy/35">
