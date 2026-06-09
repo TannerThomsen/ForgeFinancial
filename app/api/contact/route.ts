@@ -112,7 +112,7 @@ export async function POST(request: Request) {
   const from =
     process.env.RESEND_FROM_EMAIL || 'Forge Financial Solutions <onboarding@resend.dev>';
   const fullName = `${data.firstName} ${data.lastName}`;
-  const subject = `Forge website inquiry from ${fullName}`;
+  const subject = `Forge inquiry from ${fullName}`;
   const text = [
     `Name: ${fullName}`,
     `Company: ${data.company}`,
@@ -136,7 +136,7 @@ export async function POST(request: Request) {
                         <td>
                           <div style="height: 8px; width: 8px; background: #d95f1a; border-radius: 50%; margin-bottom: 18px;"></div>
                           <div style="color: #ff7a1a; font-family: Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;">
-                            New Website Inquiry
+                            New Inquiry
                           </div>
                           <h1 style="margin: 10px 0 0; color: #ffffff; font-family: Georgia, serif; font-size: 34px; line-height: 1.05; font-weight: 400;">
                             ${escapeHtml(fullName)}
