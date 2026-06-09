@@ -18,7 +18,7 @@ const team = [
   {
     name: 'Brynn Harms',
     title: 'Esker Certified · Technical Implementation',
-    bio: 'Brynn specializes in the configuration and integration side of AR implementations - building solutions that are scalable and practical for day-to-day use. Her Esker certification bridges technical execution with a deep understanding of business outcomes.',
+    bio: 'Brynn specializes in the configuration and integration side of AR implementations - building solutions that are scalable and practical for day-to-day use. His Esker certification bridges technical execution with a deep understanding of business outcomes.',
   },
 ] as const;
 
