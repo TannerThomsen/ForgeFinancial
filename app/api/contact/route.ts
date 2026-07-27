@@ -69,20 +69,6 @@ function getResendError(error: unknown): ResendError {
 }
 
 export async function POST(request: Request) {
-  const apiKey = process.env.RESEND_API_KEY;
-
-  if (!apiKey) {
-    console.error('[contact] Missing RESEND_API_KEY environment variable.');
-
-    return NextResponse.json(
-      {
-        error: 'Contact form email is not configured.',
-        stage: 'missing_api_key',
-      },
-      { status: 500 },
-    );
-  }
-
   const payload = (await request.json().catch(() => null)) as ContactPayload | null;
 
   if (!payload) {
@@ -105,6 +91,32 @@ export async function POST(request: Request) {
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
     return NextResponse.json({ error: 'Please provide a valid email address.' }, { status: 400 });
+  }
+
+  const testMode =
+    process.env.CONTACT_EMAIL_TEST_MODE === 'true' ||
+    process.env.CONTACT_EMAIL_ENABLED === 'false';
+  const apiKey = process.env.RESEND_API_KEY;
+
+  if (testMode) {
+    console.info('[contact] Test mode enabled. Contact submission accepted without sending.', {
+      email: data.email,
+      company: data.company,
+    });
+
+    return NextResponse.json({ ok: true, mode: 'test' });
+  }
+
+  if (!apiKey) {
+    console.error('[contact] Missing RESEND_API_KEY environment variable.');
+
+    return NextResponse.json(
+      {
+        error: 'Contact form email is not configured.',
+        stage: 'missing_api_key',
+      },
+      { status: 500 },
+    );
   }
 
   const resend = new Resend(apiKey);

@@ -9,9 +9,14 @@ const fields = [
   { name: 'email', label: 'Email', type: 'email', autoComplete: 'email' },
 ] as const;
 
-export default function ContactForm() {
+type ContactFormProps = {
+  onSuccess?: () => void;
+};
+
+export default function ContactForm({ onSuccess }: ContactFormProps) {
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   return (
     <form
@@ -19,25 +24,35 @@ export default function ContactForm() {
       onSubmit={async (event) => {
         event.preventDefault();
         setError('');
+        setSubmitting(true);
 
         const form = event.currentTarget;
         const formData = new FormData(form);
-        const response = await fetch('/api/contact', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(Object.fromEntries(formData.entries())),
-        });
 
-        if (!response.ok) {
+        try {
+          const response = await fetch('/api/contact', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(Object.fromEntries(formData.entries())),
+          });
+
+          if (!response.ok) {
+            setSent(false);
+            setError('Something went wrong. Please try again.');
+            return;
+          }
+
+          form.reset();
+          setSent(true);
+          onSuccess?.();
+        } catch {
           setSent(false);
           setError('Something went wrong. Please try again.');
-          return;
+        } finally {
+          setSubmitting(false);
         }
-
-        form.reset();
-        setSent(true);
       }}
     >
       <div className="grid gap-5 sm:grid-cols-2">
@@ -72,8 +87,8 @@ export default function ContactForm() {
       </label>
 
       <div className="mt-7 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-        <button className="forge-button forge-button-primary px-9" type="submit">
-          Submit
+        <button className="forge-button forge-button-primary px-9" disabled={submitting} type="submit">
+          {submitting ? 'Submitting' : 'Submit'}
         </button>
         {sent ? (
           <p className="font-outfit text-[13px] font-light text-muted">
