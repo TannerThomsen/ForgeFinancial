@@ -1,6 +1,7 @@
 'use client';
 
 import { m } from 'framer-motion';
+import Image from 'next/image';
 import Link from 'next/link';
 import Eyebrow from '@/components/Eyebrow';
 import ForgeField from '@/components/ForgeField';
@@ -14,12 +15,53 @@ type SectionProps = {
 const stats = [
   ['30+', 'Years of hands-on AR leadership'],
   ['5', 'End-to-end service disciplines'],
-  ['3', 'Certified technology partnerships'],
+  ['6+', 'Certified technology partnerships'],
 ] as const;
+
+const partners = [
+  {
+    name: 'Esker',
+    logo: '/partner-esker.svg',
+    width: 92,
+    height: 30,
+  },
+  {
+    name: 'Quadient',
+    logo: '/partner-quadient.png',
+    width: 96,
+    height: 24,
+  },
+  {
+    name: 'Enlighten.net',
+    logo: '/partner-enlighten.png',
+    width: 112,
+    height: 36,
+  },
+  {
+    name: 'Echopath',
+    logo: '/partner-echopath.png',
+    width: 114,
+    height: 44,
+  },
+  {
+    name: 'Inspiritek',
+    logo: '/partner-inspiritek.png',
+    width: 104,
+    height: 30,
+  },
+  {
+    name: 'Wind River Payments',
+    logo: '/partner-wind-river-payments.png',
+    width: 132,
+    height: 34,
+  },
+] as const;
+
+const partnerMarquee = [...partners, ...partners] as const;
 
 export default function S0Hero({ isActive, goTo }: SectionProps) {
   return (
-    <section className="section-shell flex items-center bg-paper py-20 md:items-start md:pt-[154px] lg:items-center lg:pt-0" aria-label="The Problem">
+    <section className="section-shell flex items-start bg-paper py-20 pt-[96px] md:pt-[154px] lg:pt-[118px]" aria-label="The Problem">
       <ForgeField intensity="high" isActive={isActive} />
       <m.div
         animate={isActive ? 'visible' : 'hidden'}
@@ -32,14 +74,6 @@ export default function S0Hero({ isActive, goTo }: SectionProps) {
 
       <div className="relative z-10 max-w-[790px] px-6 md:pl-[112px] lg:pl-[180px] xl:pl-[198px]">
         <m.div initial="hidden" animate={isActive ? 'visible' : 'hidden'}>
-          <m.div
-            className="mb-7 inline-flex items-center gap-3 border border-orange/20 bg-white/55 px-3 py-2 font-display text-[11px] font-semibold uppercase tracking-[0.18em] text-navy shadow-forge backdrop-blur"
-            variants={popVariant}
-            custom={0.04}
-          >
-            <span className="forge-brand-chip px-2 py-1 text-[10px] tracking-[0.12em]">Forge better</span>
-            <span>Cash Flow</span>
-          </m.div>
           <m.div variants={revealVariant} custom={0.1}>
             <Eyebrow label="Accounts Receivable Consulting" isActive={isActive} />
           </m.div>
@@ -65,6 +99,37 @@ export default function S0Hero({ isActive, goTo }: SectionProps) {
             <button className="forge-button forge-button-ghost" onClick={() => goTo(2)} type="button">
               See Our Services
             </button>
+          </m.div>
+          <m.div
+            className="mt-8 max-w-[620px] overflow-hidden border-y border-border/70 py-3"
+            variants={popVariant}
+            custom={0.62}
+          >
+            <div className="flex flex-col gap-3">
+              <span className="font-outfit text-[10px] font-medium uppercase tracking-[0.18em] text-orange">
+                Certified Technology Partners
+              </span>
+              <m.div
+                animate={{ x: ['0%', '-50%'] }}
+                className="flex w-max items-center gap-3"
+                transition={{ duration: 30, ease: 'linear', repeat: Infinity }}
+              >
+                {partnerMarquee.map((partner, index) => (
+                  <span
+                    className="grid h-10 w-[118px] shrink-0 place-items-center border border-border/70 bg-white/55 px-4 backdrop-blur transition-colors hover:border-orange/25 hover:bg-white/75"
+                    key={`${partner.name}-${index}`}
+                  >
+                    <Image
+                      alt={`${partner.name} logo`}
+                      className="max-h-6 w-auto object-contain opacity-55 grayscale transition duration-300 hover:opacity-95 hover:grayscale-0"
+                      height={partner.height}
+                      src={partner.logo}
+                      width={partner.width}
+                    />
+                  </span>
+                ))}
+              </m.div>
+            </div>
           </m.div>
         </m.div>
       </div>

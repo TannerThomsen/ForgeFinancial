@@ -16,7 +16,7 @@ type NavLink =
 const navLinks: NavLink[] = [
   { label: 'Services', section: 2 },
   { label: 'Our Team', section: 4 },
-  { label: 'Partners', section: 4 },
+  { label: 'Partners', section: 0 },
   { label: "What's New", href: 'https://www.linkedin.com/company/forge-financial-solutions-llc/' },
   { label: 'Contact', section: 5 },
 ];
