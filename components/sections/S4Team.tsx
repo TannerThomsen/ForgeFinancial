@@ -1,9 +1,9 @@
 'use client';
 
+import Image from 'next/image';
 import { m } from 'framer-motion';
-import Eyebrow from '@/components/Eyebrow';
 import ForgeField from '@/components/ForgeField';
-import { panelPopVariant, popVariant, revealVariant, watermarkVariant } from '@/lib/animations';
+import { panelPopVariant, popVariant, watermarkVariant } from '@/lib/animations';
 
 type SectionProps = {
   isActive: boolean;
@@ -14,11 +14,15 @@ const team = [
     name: 'Krista Thomsen',
     title: 'Founder · Nearly 30 Years in AR',
     bio: 'Krista has spent her career guiding organizations through complex AR transformations with a focus on clarity, accountability, and long-term value. She built Forge to bring that same hands-on leadership to every client - not as a framework, but as a practice.',
+    image: '/team-krista.jpg',
+    imagePosition: 'object-top',
   },
   {
     name: 'Brynn Harms',
     title: 'Esker Certified · Technical Implementation',
     bio: 'Brynn specializes in the configuration and integration side of AR implementations - building solutions that are scalable and practical for day-to-day use. His Esker certification bridges technical execution with a deep understanding of business outcomes.',
+    image: '/team-brynn.jpg',
+    imagePosition: 'object-[center_10%]',
   },
 ] as const;
 
@@ -36,51 +40,43 @@ export default function S4Team({ isActive }: SectionProps) {
       </m.div>
 
       <m.div animate={isActive ? 'visible' : 'hidden'} className="relative z-10 w-full" initial="hidden">
-        <m.div variants={revealVariant} custom={0.1}>
-          <Eyebrow label="Our Team" isActive={isActive} />
-        </m.div>
-        <m.h2 className="headline mt-6 max-w-[660px] text-[38px] leading-[1.05] md:text-[46px]" variants={popVariant} custom={0.22}>
+        <m.h2 className="headline max-w-[760px] text-[36px] leading-[1.04] md:text-[44px]" variants={popVariant} custom={0.16}>
           Built by people who&apos;ve been <em>inside the operation.</em>
         </m.h2>
 
         <m.div
-          className="mt-11 grid gap-px overflow-hidden border border-orange/15 bg-orange/15 shadow-forge md:grid-cols-2"
+          className="mt-9 grid gap-8 md:grid-cols-2 md:gap-12"
           variants={panelPopVariant}
-          custom={0.34}
+          custom={0.28}
         >
           {team.map((member) => (
             <m.article
-              className="bg-white/55 p-7 backdrop-blur transition-colors duration-300 hover:bg-white/75 md:p-11"
+              className="group relative min-h-[430px] overflow-hidden bg-ink text-white outline-none md:min-h-[500px] xl:min-h-[540px]"
               key={member.name}
-              whileHover={{ backgroundColor: 'var(--paper-2)' }}
               transition={{ duration: 0.3 }}
+              tabIndex={0}
             >
-              <h3 className="font-cormorant text-[30px] font-semibold leading-none text-navy">
-                {member.name}
-              </h3>
-              <p className="mt-3 font-outfit text-[10px] font-medium uppercase tracking-[0.14em] text-orange">
-                {member.title}
-              </p>
-              <p className="body-copy mt-5 text-[13px]">{member.bio}</p>
+              <Image
+                alt={`Portrait of ${member.name}`}
+                className={`${member.imagePosition} object-cover transition duration-700 ease-out group-hover:scale-[1.035] group-focus:scale-[1.035]`}
+                fill
+                sizes="(min-width: 768px) 50vw, 100vw"
+                src={member.image}
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(5,9,20,0.92)_0%,rgba(12,30,66,0.66)_45%,rgba(12,30,66,0.08)_100%)] transition duration-500 group-hover:bg-[linear-gradient(to_top,rgba(5,9,20,0.96)_0%,rgba(12,30,66,0.72)_52%,rgba(12,30,66,0.18)_100%)] group-focus:bg-[linear-gradient(to_top,rgba(5,9,20,0.96)_0%,rgba(12,30,66,0.72)_52%,rgba(12,30,66,0.18)_100%)]" />
+              <div className="absolute inset-x-0 bottom-0 p-7 md:p-9">
+                <span className="mb-5 block h-px w-9 origin-left bg-orange transition duration-500 group-hover:w-16 group-focus:w-16" />
+                <h3 className="font-cormorant text-[34px] font-semibold leading-none text-white md:text-[38px]">
+                  {member.name}
+                </h3>
+                <p className="mt-3 font-outfit text-[10px] font-medium uppercase tracking-[0.14em] text-orange">
+                  {member.title}
+                </p>
+                <p className="mt-5 max-w-[460px] font-outfit text-[13px] font-light leading-[1.8] text-white/80 transition duration-500 md:max-h-[72px] md:translate-y-2 md:overflow-hidden md:opacity-50 md:group-hover:max-h-[240px] md:group-hover:translate-y-0 md:group-hover:opacity-95 md:group-focus:max-h-[240px] md:group-focus:translate-y-0 md:group-focus:opacity-95">
+                  {member.bio}
+                </p>
+              </div>
             </m.article>
-          ))}
-        </m.div>
-
-        <m.div
-          className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-border/60 py-4"
-          variants={popVariant}
-          custom={0.5}
-        >
-          <span className="font-outfit text-[10px] font-medium uppercase tracking-[0.18em] text-orange">
-            Certified Partners
-          </span>
-          {['Esker', 'Enlighten.net', 'Inspiritek'].map((partner) => (
-            <span
-              className="border-l border-border/60 pl-6 font-outfit text-xs font-light text-navy/40 transition-colors hover:text-navy"
-              key={partner}
-            >
-              {partner}
-            </span>
           ))}
         </m.div>
       </m.div>
